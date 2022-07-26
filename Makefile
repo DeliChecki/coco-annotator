@@ -7,11 +7,13 @@ DOCKERFILE = Dockerfile
 tag = 1.0.0
 IMAGE = $(IMAGE_NAME):$(tag)
 
-build:
-    @docker build -f $(DOCKERFILE) -t $(IMAGE) .
+all: build
 
-run:
-    @docker-compose up -d
+build: ## kek
+    $(shell docker build -f $(DOCKERFILE) -t $(IMAGE) .)
 
-stop:
-    @docker-compose down
+run: ## kek
+    $(shell docker-compose up -d)
+
+stop: ## kek
+    $(shell docker-compose down)
