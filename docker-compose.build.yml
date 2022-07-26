@@ -22,8 +22,11 @@ services:
       - FILE_WATCHER=true
       - NAME=Test Annotator
     volumes:
-      - "./datasets:/datasets"
-      - "./models:/models"
+      - ./client:/workspace/client
+      - ./client/package*:/workspace
+      - ./backend:/workspace
+      - ./datasets:/datasets
+      - ./models:/models
     depends_on:
       - database
       - workers

@@ -73,6 +73,9 @@ class Dataset(Resource):
     @login_required
     def post(self):
         """ Creates a dataset """
+        if not current_user.is_admin:
+            return {"success": False, "message": "Access Denied"}, 403
+
         args = dataset_create.parse_args()
         name = args['name']
         categories = args.get('categories', [])
@@ -147,18 +150,20 @@ class DatasetCleanMeta(Resource):
     @login_required
     def get(self, dataset_id):
         """ All users in the dataset """
-        args = dataset_generate.parse_args()
+        return {"success": False, "message": "Access denied"}, 403
 
-        dataset = current_user.datasets.filter(id=dataset_id, deleted=False).first()
-        if dataset is None:
-            return {"message": "Invalid dataset id"}, 400
-
-        AnnotationModel.objects(dataset_id=dataset.id)\
-            .update(metadata=dataset.default_annotation_metadata)
-        ImageModel.objects(dataset_id=dataset.id)\
-            .update(metadata={})
-
-        return {'success': True}
+        # args = dataset_generate.parse_args()
+        #
+        # dataset = current_user.datasets.filter(id=dataset_id, deleted=False).first()
+        # if dataset is None:
+        #     return {"message": "Invalid dataset id"}, 400
+        #
+        # AnnotationModel.objects(dataset_id=dataset.id)\
+        #     .update(metadata=dataset.default_annotation_metadata)
+        # ImageModel.objects(dataset_id=dataset.id)\
+        #     .update(metadata={})
+        #
+        # return {'success': True}
 
 
 @api.route('/<int:dataset_id>/stats')
@@ -181,8 +186,6 @@ class DatasetStats(Resource):
         category_count = dict()
         image_category_count = dict()
 
-
-
         user_stats = dict()
 
         for user in dataset.get_users():
@@ -195,7 +198,6 @@ class DatasetStats(Resource):
                 "annotations":  len(user_annots),
                 "images": len(image_count)
             }
-
 
         for category in dataset.categories:
 

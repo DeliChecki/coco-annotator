@@ -9,7 +9,7 @@ networks:
 
 services:
   webserver:
-    image: jsbroks/coco-annotator:webserver-stable
+    image: delichecki.ru/coco-annotator:latest
     container_name: annotator_webclient
     restart: always
     ports:
@@ -17,9 +17,17 @@ services:
     environment:
       - SECRET_KEY=RandomSecretKeyHere
       - FILE_WATCHER=true
+      - FLASK_ENV=production
+      - DEBUG=false
+      - MONGODB_HOST=mognodb://database/collection
+      - CELERY_RESULT_BACKEND=mongodb://database/collection
+      - ALLOW_REGISTRATION=false
     volumes:
-      - "./datasets:/datasets"
-      - "./models:/models"
+      - ./client:/workspace/client
+      - ./client/package*:/workspace
+      - ./backend:/workspace
+      - ./datasets:/datasets
+      - ./models:/models
     depends_on:
       - database
       - workers
@@ -27,9 +35,13 @@ services:
       - cocoannotator
   workers:
     container_name: annotator_workers
-    image: jsbroks/coco-annotator:workers-stable
+    image: delichecki.ru/coco-annotator:latest
     volumes:
-      - "./datasets:/datasets"
+      - ./client:/workspace/client
+      - ./client/package*:/workspace
+      - ./backend:/workspace
+      - ./datasets:/datasets
+      - ./models:/models
     depends_on:
       - messageq
       - database
