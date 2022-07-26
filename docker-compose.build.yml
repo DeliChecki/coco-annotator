@@ -22,13 +22,9 @@ services:
       - FILE_WATCHER=true
       - NAME=Test Annotator
     volumes:
-      - ./client:/workspace/client
-      - ./client/package*:/workspace
-      - ./backend:/workspace
-      - ./datasets:/datasets
-      - ./models:/models
+      - "./datasets:/datasets"
+      - "./models:/models"
     depends_on:
-      - database
       - workers
     networks:
       - cocoannotator
@@ -45,7 +41,6 @@ services:
       - "./datasets:/datasets"
     depends_on:
       - messageq
-      - database
     ports:
       - 5555:5555
     networks:
@@ -58,19 +53,5 @@ services:
       - RABBITMQ_DEFAULT_PASS=password
     ports:
       - 5672:5672
-    networks:
-      - cocoannotator
-  database:
-    image: mongo:4.0
-    container_name: annotator_mongodb
-    restart: always
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
-    volumes:
-      - "mongodb_data:/data/db"
-    ports:
-      - "27017:27017"
-    command: "mongod --smallfiles --logpath=/dev/null"
     networks:
       - cocoannotator

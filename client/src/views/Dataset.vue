@@ -180,7 +180,7 @@
               class="btn btn-sm btn-block btn-danger"
               @click="resetMetadata"
             >
-              Rest All Metadata
+              Reset All Metadata
             </button>
           </div>
         </div>
